@@ -1,22 +1,34 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-
-
-
+import { Message } from "element-ui"
 
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
       name: 'HelloWorld',
       component: () => import('@/components/HelloWorld'),
       meta: {
+        isAuth: true,
         keepAlive: true   //组件缓存，组件中的状态会被保留
+      },
+      children: [{
+        path: 'notebook',
+        component: () => import('../pages/notebook')
+      },
+      {
+        name: 'note',
+        path: 'note',
+        component: () => import('@/pages/note')
+      },
+      {
+        path: 'collection',
+        component: () => import('@/pages/collection')
       }
+      ]
     },
     {
       path: '/test',
@@ -51,7 +63,7 @@ export default new Router({
     },
     {
       path: '/gen',
-      component: () => import('../../pages/gen')
+      component: () => import('../pages/gen')
     },
     {
       path: '/login',
@@ -60,5 +72,32 @@ export default new Router({
   ]
 })
 
+export default router
+
+router.beforeEach(async (to, from, next) => {   //全局前置守卫
+  let token = await window.localStorage.getItem('token')
+  if (!token && to.path !== '/login') {
+    next('/login')
+    Message({
+      message: '请先登录',
+      type: 'error'
+    })
+  } else {
+    next()
+  }
+  // if (!token && to.path === '/') {
+  //   next('/login')
+  // }
+})
+
+
+// 注册一个全局后置守卫
+// router.afterEach((to) => {
+//   if (to.meta.title) {
+//     document.title = to.meta.title //修改网页的title
+//   } else {
+//     document.title = 'course_demo'
+//   }
+// })
 
 

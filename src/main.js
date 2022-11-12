@@ -4,10 +4,16 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import moment from 'moment'
 import 'element-ui/lib/theme-chalk/index.css';
 import store from './store'
 Vue.use(ElementUI)
 
+Vue.filter('formDate', (date) => {   //全局过滤器使用
+  return moment(date).format('YYYY-MM-DD, HH:mm:ss ')
+})
+
+Vue.prototype.$moment = moment  //原型挂载使用
 
 Vue.config.productionTip = false
 Vue.prototype.$event = new Vue()
@@ -28,19 +34,6 @@ new Vue({
 })
 
 
-router.beforeEach((to, from, next) => {   //全局前置守卫
-  if (to.path === '/login') next()
-  let token = window.localStorage.getItem('token')
-  if (token) {
-    next()
-    return
-  } else {
-    next('/login')
-  }
-  // if (!token && to.path === '/') {
-  //   next('/login')
-  // }
-})
 
 
 // router.afterEach((to, from) => {

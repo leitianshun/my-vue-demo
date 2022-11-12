@@ -9,10 +9,10 @@
 
       <div style="">
         <span :title="users" style="color:red">欢迎回来:</span>
-        {{ user }}
+        {{ isLogin ? userName : "" }}
       </div>
       <div
-        v-if="isToken"
+        v-if="!isLogin"
         @click="toLogin"
         style="background-color: red;color: aliceblue;width: 100px;height: 40px;line-height: 40px;border-radius: 20px;"
       >
@@ -146,6 +146,103 @@
         </template>
       </child>
     </div>
+    <div>
+      <button @click="success">成功消息提示</button>
+    </div>
+    <div>使用moment日期格式化全局filter过滤器:{{ nowDate | formDate }}</div>
+    <div>
+      使用moment日期格式化，使用原型挂载$moment:{{
+        $moment(nowDate).format("YYYY-MM-DD HH:mm:ss")
+      }}
+    </div>
+    <!-- <el-container> -->
+    <el-row type="flex" justify="center">
+      <el-col :span="24">
+        评价组件:
+        <div
+          @click="pingjia(index + 1)"
+          v-for="(item, index) in 5"
+          style="cursor:pointer"
+          :key="index"
+          :style="{
+            color: appraiseINdex == item ? 'red' : ''
+          }"
+          class="el-icon-star-on "
+        ></div>
+      </el-col>
+    </el-row>
+    <el-row style="margin-top:20px">
+      <el-col>
+        <el-button type="success">小雷笔记</el-button>
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" style="margin:20px">
+      <el-col :span="8">
+        <el-input></el-input>
+      </el-col>
+      <el-col :span="5">
+        <el-button class="el-icon-circle-plus-outline" type="primary" round
+          >add NoteBooks</el-button
+        >
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" style="margin:20px">
+      <el-col :span="8">
+        <el-input></el-input>
+      </el-col>
+      <el-col :span="5">
+        <el-button type="info" class="el-icon-delete" round>
+          delete NoteBooks
+        </el-button>
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" style="margin:20px">
+      <el-col :span="8">
+        <el-input></el-input>
+      </el-col>
+      <el-col :span="5">
+        <el-button type="warning" class="el-icon-edit" round>
+          edit NoteBooks</el-button
+        >
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" style="margin:20px">
+      <el-col :span="8">
+        <el-input></el-input>
+      </el-col>
+      <el-col :span="5">
+        <el-button type="danger" class="el-icon-tickets" round>
+          view NoteBooks List</el-button
+        >
+      </el-col>
+    </el-row>
+
+    <div
+      class="notebook-box"
+      style="display:flex;justify-content: space-between;;width:calc(100% - 100px);padding: 10px;margin: 50px auto ;"
+    >
+      <div
+        class="sideBar"
+        style="width:50px;min-height:360px;display: flex;flex-direction: column;justify-content: space-around;"
+      >
+        <router-link to="/notebook" active-class="actives">
+          <i class="el-icon-collection"></i>
+        </router-link>
+        <router-link to="/note" active-class="actives">
+          <i class="el-icon-notebook-2"></i>
+        </router-link>
+        <router-link to="/collection" active-class="actives">
+          <i class="el-icon-delete-solid"></i>
+        </router-link>
+      </div>
+      <div
+        style="width:calc(100% - 100px) ;margin:  0 20px;padding: 10px;border: 1px solid rgb(187, 161, 161);"
+      >
+        <router-view></router-view>
+      </div>
+    </div>
+    <!-- </el-container> -->
+    <div style="height:300px"></div>
   </div>
 </template>
 
@@ -153,6 +250,7 @@
 import Bus from "../../hepler/Bus";
 import { mapState, mapGetters, mapActions } from "vuex";
 import Child from "./child.vue";
+import api from "../utils/http/axios";
 export default {
   // inject: ["na"],
   name: "HelloWorld",
@@ -170,7 +268,6 @@ export default {
         publishedAt: "2016-04-10"
       },
       show: false,
-      isToken: false,
       users: "",
       name: "好好学习vue",
       name2: "摆烂",
@@ -181,18 +278,25 @@ export default {
       sty: "<div :style=\"{'color': 0 === cue ? 'red' : ''}\"></div>",
       isActive: false,
       sty: false,
-      eventData: "未"
+      eventData: "未",
+      nowDate: new Date().getTime(),
+      userName: "",
+      appraiseINdex: "",
+
+      isLogin: false
     };
   },
   created() {
+    let userName = window.localStorage.getItem("userName");
+    this.userName = userName;
     // console.log(this.$store);
     // console.log(this.$store.state);
     // console.log(this.$store.state.user.count);
   },
   mounted() {
     Bus.$on("userInfo", user => {
-      console.log(user.info);
-      console.log(user);
+      // console.log(user.info);
+      // console.log(user);
       this.eventData = user.info;
     });
   },
@@ -232,6 +336,12 @@ export default {
     }
   },
   methods: {
+    pingjia(index) {
+      this.appraiseINdex = index;
+    },
+    success() {
+      this.$message.success("成功信息");
+    },
     del(id) {
       console.log(id);
       const index = this.list.findIndex(v => (v.id = id));
@@ -257,10 +367,13 @@ export default {
       this.$router.push("/login");
     },
     logout() {
-      this.isToken = true;
-      window.localStorage.removeItem("token");
-      this.$router.push("/login");
-      this.$message.success("注销成功");
+      api.logout().then(res => {
+        this.$router.push("/login");
+        this.$message.success("注销成功");
+        console.log(res);
+        window.localStorage.removeItem("token");
+        window.localStorage.removeItem("userName");
+      });
     },
     beforeCre() {
       const res = prompt("创建前的生命周期钩子是什么?");
@@ -338,8 +451,28 @@ export default {
       display: inline-block;
     }
   }
+  a {
+    color: white;
+  }
   .active {
     color: red;
+  }
+  .actives {
+    color: red;
+  }
+  .notebook-box {
+    // background: red;
+    box-shadow: 1px 1px 5px gray;
+    .sideBar {
+      background: rgb(150, 147, 147);
+      color: rgb(231, 227, 218);
+      i {
+        &:hover {
+          color: #409eff;
+          cursor: pointer;
+        }
+      }
+    }
   }
 }
 .shengming {
@@ -353,5 +486,8 @@ export default {
     border: none;
     cursor: pointer;
   }
+}
+xxx {
+  color: rgb(109, 203, 247);
 }
 </style>
