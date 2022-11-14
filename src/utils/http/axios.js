@@ -114,6 +114,9 @@ export default {
   editNoteBook: (id, data) => {
     return request('/notebooks/' + id, 'PATCH', data)
   },
+  getNoteFromNoteBook:(id)=>{
+    return request('/notes/from/' + id,'get')
+  }
 }
 
 
