@@ -18,8 +18,9 @@
           <label for="">
             密码:
             <input
+              focus
+              @keyup.enter="login()"
               type="password"
-              @keyup.enter="login"
               v-model="password"
               placeholder="请输入密码"
             />
@@ -103,6 +104,14 @@ export default {
       isShow: false
     };
   },
+  // directives: {
+  //   focus: {
+  //     // 指令的定义
+  //     inserted: function(el) {
+  //       el.focus();
+  //     }
+  //   }
+  // },
   methods: {
     ...mapMutations(["setUsername"]),
     ...mapActions(["setUser"]),

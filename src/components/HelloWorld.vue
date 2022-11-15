@@ -289,6 +289,7 @@ export default {
   created() {
     let userName = window.localStorage.getItem("userName");
     this.userName = userName;
+    this.getInfo();
     // console.log(this.$store);
     // console.log(this.$store.state);
     // console.log(this.$store.state.user.count);
@@ -336,6 +337,17 @@ export default {
     }
   },
   methods: {
+    getInfo() {
+      api.getInfo().then(res => {
+        console.log(res);
+        if (res.isLogin) {
+          this.isLogin = true;
+        } else {
+          this.$router.push("/login");
+          this.isLogin = false;
+        }
+      });
+    },
     pingjia(index) {
       this.appraiseINdex = index;
     },

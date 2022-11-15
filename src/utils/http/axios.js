@@ -91,6 +91,9 @@ const request = (url, method, data) => {
 
 export default {
   request,
+  getInfo: () => {
+    return request('/auth', 'get')
+  },
   login: (data) => {
     return request('/auth/login', 'POST', data)
   },
@@ -114,8 +117,17 @@ export default {
   editNoteBook: (id, data) => {
     return request('/notebooks/' + id, 'PATCH', data)
   },
-  getNoteFromNoteBook:(id)=>{
-    return request('/notes/from/' + id,'get')
+  getNoteFromNoteBook: (id) => {
+    return request('/notes/from/' + id, 'get')
+  },
+  addNote(id, data = '') {
+    return request(`/notes/to/${id}`, 'POST', data)
+  },
+  updateNote: (id, data) => {
+    return request('/notes/' + id, 'PATCH', data)
+  },
+  delNOte: (id) => {
+    return request(`/notes/${id}`, 'DELETE')
   }
 }
 

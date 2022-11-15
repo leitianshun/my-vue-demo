@@ -19,7 +19,7 @@
         v-for="(item, index) in bookList"
         :key="index"
         style=" "
-        @click="toNoteInfo(item.id)"
+        @click="toNoteInfo(item.id, item.title)"
       >
         <span>{{ item.title }} </span>
         <span>创建时间:{{ item.createdAt }}</span>
@@ -27,10 +27,10 @@
           <span
             class="el-icon-delete"
             style="color:red"
-            @click="delNoteBook(item.id)"
+            @click.stop="delNoteBook(item.id)"
           ></span>
           <span
-            @click="editNoteBook(item.id)"
+            @click.stop="editNoteBook(item.id)"
             class="el-icon-edit"
             style="margin:0 20px;color: blue;"
           ></span>
@@ -147,8 +147,8 @@ export default {
       //   console.log(res);
       // });
     },
-    toNoteInfo(id) {
-      this.$router.push({ path: "/note", query: { id: id } });
+    toNoteInfo(id, title) {
+      this.$router.push({ path: "/note", query: { id: id, title: title } });
       // this.$router.push({ name: "note", params: { id: id } });  //两种方法都可 使用这种时要在路由里配置name
     }
   }
