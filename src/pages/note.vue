@@ -5,6 +5,7 @@
         <el-button
           type="success"
           icon="el-icon-circle-plus-outline"
+          :disabled="noteInfo.length == 0"
           round
           @click="addNote"
           style="margin:10px 0"
@@ -88,9 +89,11 @@
           <textarea
             :disabled="noteInfo.length == 0"
             style="width:100%;"
+            id="content"
+            focus
             rows="18"
             v-model="selectNotes.content"
-            @keydown="keydownEvent"
+            @keypress="statusText = '正在输入...'"
             placeholder="输入笔记内容"
             @input="updateNote"
           ></textarea>
@@ -100,6 +103,10 @@
   </div>
 </template>
 <script>
+// let content = document.querySelector("#content");
+// content.addEventListener("keyup", e => {
+//   console.log(e.target.value);
+// });
 import lodash from "lodash";
 import api from "../utils/http/axios";
 export default {
@@ -115,6 +122,7 @@ export default {
     };
   },
   created() {
+    this.getInfo();
     // console.log(this.$route.query.id);
     // console.log(this.$route.params.id);
     this.noteBookTitle = this.$route.query.title;
@@ -133,11 +141,19 @@ export default {
     //   this.$message.warning("请选择或添加笔记");
     // }
     if (!this.$route.query.id) {
-      this.$message.warning("请先选择笔记本或添加笔记");
+      this.$message.warning("请先选择笔记本后再添加笔记");
     }
   },
 
   methods: {
+    getInfo() {
+      api.getInfo().then(res => {
+        if (!res.isLogin) {
+          this.$message.error("登录失效，请重新登录");
+          this.$router.push({ path: "/login" });
+        }
+      });
+    },
     keydownEvent(e) {
       console.log(e);
     },

@@ -10,7 +10,7 @@
             round
             @click="addNoteBook"
           >
-            add NoteBooks
+            添加笔记本
           </el-button>
         </el-col>
       </el-row>
@@ -50,9 +50,18 @@ export default {
     };
   },
   created() {
+    this.getInfo();
     this.getAllNoteBook();
   },
   methods: {
+    getInfo() {
+      api.getInfo().then(res => {
+        if (!res.isLogin) {
+          this.$message.error("登录失效，请重新登录");
+          this.$router.push({ path: "/login" });
+        }
+      });
+    },
     getAllNoteBook() {
       api.getAllNoteBook().then(res => {
         console.log(res.data);
@@ -160,7 +169,8 @@ export default {
   li {
     width: 100%;
     height: 30px;
-    background-color: rgb(193, 199, 199);
+    background-color: rgb(219, 235, 245);
+    border-radius: 20px;
     margin: 10px 0;
     display: flex;
     justify-content: space-around;
