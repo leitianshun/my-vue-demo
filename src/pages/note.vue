@@ -5,7 +5,7 @@
         <el-button
           type="success"
           icon="el-icon-circle-plus-outline"
-          :disabled="noteInfo.length == 0"
+          :disabled="!$route.query.id"
           round
           @click="addNote"
           style="margin:10px 0"
@@ -20,7 +20,7 @@
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-s-management"></i>
-              <span>{{ noteBookTitle ? noteBookTitle : "笔记本" }} </span>
+              <span>{{ noteBookTitle ? noteBookTitle : "" }} </span>
             </template>
             <el-menu-item-group v-for="(item, index) in noteInfo" :key="index">
               <!-- <template slot="title">分组一</template> -->
@@ -29,7 +29,13 @@
               >
             </el-menu-item-group>
             <el-menu-item-group v-show="noteInfo.length == 0">
-              <el-menu-item>暂无笔记，请点击上方添加笔记</el-menu-item>
+              <el-menu-item
+                >{{
+                  !$route.query.id
+                    ? "请先选择笔记本后点击添加笔记"
+                    : " 暂无笔记，请点击上方添加笔记 "
+                }}
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -38,27 +44,10 @@
         <el-header>
           <el-row>
             <el-col :span="6">
-              <span
-                >创建时间:
-                {{
-                  noteInfo.length > 0
-                    ? $moment(selectNotes.createdAt)
-                        .startOf("hour")
-                        .fromNow()
-                    : ""
-                }}</span
-              >
+              <span>创建时间: {{ selectNotes.createdAt | formDate }}</span>
             </el-col>
             <el-col :span="6">
-              <span
-                >更新时间 :{{
-                  noteInfo.length > 0
-                    ? $moment(selectNotes.updatedAt)
-                        .startOf("hour")
-                        .fromNow()
-                    : ""
-                }}</span
-              >
+              <span>更新时间 :{{ selectNotes.updatedAt | formDate }}</span>
             </el-col>
             <el-col :span="6">
               <span>{{ statusText }} </span>
