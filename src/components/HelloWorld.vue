@@ -22,7 +22,7 @@
       <div
         v-else
         @click="logout"
-        style="background-color: red;color: aliceblue;width: 100px;height: 40px;line-height: 40px;border-radius: 20px;"
+        style="background-color: red;color: aliceblue;width: 100px;height: 40px;line-height: 40px;border-radius: 20px;cursor: pointer;"
       >
         注销
       </div>
@@ -379,12 +379,18 @@ export default {
       this.$router.push("/login");
     },
     logout() {
-      api.logout().then(res => {
-        this.$router.push("/login");
-        this.$message.success("注销成功");
-        console.log(res);
-        window.localStorage.removeItem("token");
-        window.localStorage.removeItem("userName");
+      this.$confirm("您确定要退出吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        api.logout().then(res => {
+          this.$router.push("/login");
+          this.$message.success("注销成功");
+          console.log(res);
+          window.localStorage.removeItem("token");
+          window.localStorage.removeItem("userName");
+        });
       });
     },
     beforeCre() {

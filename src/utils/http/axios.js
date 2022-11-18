@@ -128,6 +128,16 @@ export default {
   },
   delNOte: (id) => {
     return request(`/notes/${id}`, 'DELETE')
+  },
+  getNoteByTrash: () => {
+    return request('/notes/trash', 'get', null)
+  },
+  revertNote: (noteId) => {
+    let url = '/notes/:noteId/revert'
+    return request(url.replace(':noteId', noteId), 'PATCH')
+  },
+  deleteNote(noteId) {
+    return request(`/notes/${noteId}/confirm`, 'DELETE')
   }
 }
 
