@@ -17,16 +17,16 @@ const router = new Router({
       },
       children: [{
         path: 'notebook',
-        component: () => import('../pages/notebook')
+        component: () => import('@/pages/note/notebook')
       },
       {
         name: 'note',
         path: 'note',
-        component: () => import('@/pages/note')
+        component: () => import('@/pages/note/note')
       },
       {
         path: 'collection',
-        component: () => import('@/pages/collection')
+        component: () => import('@/pages/note/collection')
       }
       ]
     },

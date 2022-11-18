@@ -97,7 +97,7 @@
 //   console.log(e.target.value);
 // });
 import lodash from "lodash";
-import api from "../utils/http/axios";
+import api from "@/utils/http/axios";
 export default {
   name: "note",
   data() {

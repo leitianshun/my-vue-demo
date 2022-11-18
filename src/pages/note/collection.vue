@@ -33,7 +33,7 @@
   </div>
 </template>
 <script>
-import api from "../utils/http/axios";
+import api from "@/utils/http/axios";
 export default {
   name: "component_name",
   data() {
