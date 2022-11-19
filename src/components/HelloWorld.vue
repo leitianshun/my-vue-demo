@@ -281,15 +281,17 @@ export default {
       eventData: "未",
       nowDate: new Date().getTime(),
       userName: "",
-      appraiseINdex: "",
+      appraiseINdex: ""
 
-      isLogin: false
+      // isLogin: false
     };
   },
   created() {
     let userName = window.localStorage.getItem("userName");
     this.userName = userName;
-    this.getInfo();
+    // this.getInfo();
+    this.setLogin();
+
     // console.log(this.$store);
     // console.log(this.$store.state);
     // console.log(this.$store.state.user.count);
@@ -305,8 +307,8 @@ export default {
     // com() {
     //   return this.eventData.charAt(2);
     // },
-    ...mapState(["count"]),
-    ...mapGetters(["user", "num", "ss"]),
+    ...mapState(["count,isLogin"]),
+    ...mapGetters(["user", "num", "ss", "isLogin"]),
     names() {
       return this.name
         .split("")
@@ -337,17 +339,18 @@ export default {
     }
   },
   methods: {
-    getInfo() {
-      api.getInfo().then(res => {
-        console.log(res);
-        if (res.isLogin) {
-          this.isLogin = true;
-        } else {
-          this.$router.push("/login");
-          this.isLogin = false;
-        }
-      });
-    },
+    ...mapActions(["setLogin"]),
+    // getInfo() {
+    //   api.getInfo().then(res => {
+    //     console.log(res);
+    //     if (res.isLogin) {
+    //       this.isLogin = true;
+    //     } else {
+    //       this.$router.push("/login");
+    //       this.isLogin = false;
+    //     }
+    //   });
+    // },
     pingjia(index) {
       this.appraiseINdex = index;
     },
@@ -359,7 +362,6 @@ export default {
       const index = this.list.findIndex(v => (v.id = id));
       this.list.splice(index, 1);
     },
-    ...mapActions(["setCount"]),
     add() {
       this.setCount(1);
     },

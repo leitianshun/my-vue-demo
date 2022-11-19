@@ -1,10 +1,14 @@
+import api from '@/utils/http/axios';
+import router from '../../router';
+
 const state = {
     username: '',
-    count: 0
+    isLogin: false
 }
 const getters = {
     user: state => state.username,
     num: state => state.count,
+    isLogin: state => state.isLogin
 }
 const mutations = {
     setUsername(state, payload) {
@@ -14,6 +18,11 @@ const mutations = {
     },
     add(state, num) {
         state.count += num
+    },
+    setLogin(state, payload) {
+
+        state.isLogin = payload.isLogin
+        console.log(state.isLogin)
     }
 }
 
@@ -27,7 +36,20 @@ const actions = {
         setTimeout(() => {
             commit('add', num)
         }, 1000)
+    },
+    setLogin({ commit }, payload = { path: '/login' }) {
+        api.getInfo().then((res) => {
+            console.log(res)
+            if (!res.isLogin) {
+                router.push(payload)
+            } else {
+                commit('setLogin', { isLogin: true })
+
+            }
+        })
     }
+
 }
+console.log(state.isLogin)
 
 export default { state, mutations, getters, actions }
