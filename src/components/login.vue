@@ -9,22 +9,18 @@
             <input type="text" v-model="username" placeholder="请输入昵称" />
           </label>
         </div> -->
-          <label for="">
-            用户名:
-            <input type="text" v-model="username" placeholder="请输入用户名" />
-          </label>
+          用户名:
+          <input type="text" v-model="username" placeholder="请输入用户名" />
         </div>
         <div class="pass">
-          <label for="">
-            密码:
-            <input
-              focus
-              @keyup.enter="login()"
-              type="password"
-              v-model="password"
-              placeholder="请输入密码"
-            />
-          </label>
+          密码:
+          <input
+            focus
+            @keydown.enter="login"
+            type="password"
+            v-model="password"
+            placeholder="请输入密码"
+          />
         </div>
 
         <!-- <div

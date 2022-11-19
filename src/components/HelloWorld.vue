@@ -291,7 +291,6 @@ export default {
     this.userName = userName;
     // this.getInfo();
     this.setLogin();
-
     // console.log(this.$store);
     // console.log(this.$store.state);
     // console.log(this.$store.state.user.count);
@@ -308,7 +307,7 @@ export default {
     //   return this.eventData.charAt(2);
     // },
     ...mapState(["count,isLogin"]),
-    ...mapGetters(["user", "num", "ss", "isLogin"]),
+    ...mapGetters(["user", "num", "isLogin"]),
     names() {
       return this.name
         .split("")
