@@ -50,3 +50,24 @@
 //     return request('/auth/login', 'POST', data)
 //   }
 // }
+
+
+
+
+const request = (url, method, data) => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open(`${method}`, `//blog-server.hunger-valley.com${url}`)
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    xhr.send(data)
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        console.log(xhr.responseText)
+        resolve(xhr)
+      }
+    }
+  })
+}
+
+request('/auth/login', 'POST', 'username=lts&password=123456')
+
