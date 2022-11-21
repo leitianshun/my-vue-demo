@@ -7,6 +7,9 @@
         <el-button type="warning" round @click="blogIsLogin"
           >判断博客登录是否过期</el-button
         >
+        <el-button type="success" round @click="dialogFormVisible = true"
+          >新增博客</el-button
+        >
         <el-button type="warning" round @click="getAllBlogList"
           >获取博客列表</el-button
         >
@@ -15,6 +18,47 @@
       </el-col>
     </el-row>
     <hr />
+    <el-dialog title="添加博客" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="博客标题:" :label-width="formLabelWidth">
+          <el-input
+            v-model="form.title"
+            autocomplete="off"
+            placeholder="请输入标题，最低10个字"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="博客简介:" :label-width="formLabelWidth">
+          <el-input
+            v-model="form.description"
+            autocomplete="off"
+            placeholder="请输入简介，最低30个字"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="博客内容:" :label-width="formLabelWidth">
+          <textarea
+            placeholder="请输入内容"
+            v-model="form.content"
+            cols="13"
+            rows="12"
+            style="width:100%"
+          ></textarea>
+        </el-form-item>
+        <el-form-item
+          label="是否置顶:"
+          :label-width="formLabelWidth"
+          style="text-align:left"
+        >
+          <el-select v-model="form.atIndex" placeholder="请选择是否置顶">
+            <el-option label="是" value="true"></el-option>
+            <el-option label="否" value="false"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addBlog">确 定</el-button>
+      </div>
+    </el-dialog>
     <el-row type="flex" justify="center">
       <el-col :span="23">
         <ul class="noteBookList">
@@ -26,7 +70,8 @@
             />
             <span>博客标题:{{ item.title }}</span>
             <span>创建时间:{{ item.createdAt | formDate }}</span>
-            <span>是否置顶:{{ item.atIndex }}</span>
+            <span>更新时间:{{ item.updatedAt | formDate }}</span>
+            <span>是否置顶:{{ item.atIndex ? "是" : "否" }}</span>
             <span>博客作者:{{ item.user.username }}</span>
             <span
               class="el-icon-delete"
@@ -55,7 +100,10 @@ export default {
     return {
       blogList: [],
       page: 1,
-      totalPage: ""
+      totalPage: "",
+      dialogFormVisible: false,
+      formLabelWidth: "120px",
+      form: {}
     };
   },
   created() {
@@ -72,10 +120,10 @@ export default {
           request("/blog/" + id, "DELETE", null).then(res => {
             console.log("🚀 ~ file: blog.vue ~ line 74 ~ request ~ res", res);
             this.$message({
-              type: "warning",
+              type: "success",
               message: res.msg
             });
-            // this.getAllBlogList();
+            this.getAllBlogList();
           });
         })
         .catch(() => {
@@ -84,6 +132,38 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    addBlog() {
+      this.dialogFormVisible = false;
+      if (this.form.title.length < 10) {
+        this.$message.error("文章标题至少10个字");
+        return;
+      }
+      if (this.form.description.length < 30) {
+        this.$message.error("文章简介至少30个字");
+        return;
+      }
+      if (this.form.content.length < 200) {
+        this.$message.error("文章内容至少200个字");
+        return;
+      }
+      request(
+        "/blog",
+        "post",
+        "title=" +
+          this.form.title +
+          "&description=" +
+          this.form.description +
+          "&atIndex=" +
+          this.form.atIndex +
+          "&content=" +
+          this.form.content
+      ).then(res => {
+        this.form = {};
+        console.log(res);
+        this.$message.success(res.msg);
+        this.getAllBlogList();
+      });
     },
     editBlog(id) {
       console.log("🚀 ~ file: blog.vue ~ line 66 ~ editBlog ~ id", id);
