@@ -90,6 +90,7 @@ import api from "../utils/http//axios.js";
 import Bus from "../../hepler/Bus";
 import { Message } from "element-ui";
 import { mapMutations, mapActions } from "vuex";
+import request from "../utils/http/blog";
 const nameReg = /^[\w\u4e00-\u9fa5]{3,15}$/;
 const pasReg = /^.{6,10}/;
 export default {
@@ -137,10 +138,19 @@ export default {
           this.$router.push("/");
           Message.success("登录成功");
           window.localStorage.setItem("userName", this.username);
+          this.blogLogin(); //调用博客登录
         })
         .catch(err => {
           this.$message.error(err.msg);
         });
+    },
+    blogLogin() {
+      request("/auth/login", "POST", "username=lts&password=123456").then(
+        res => {
+          // console.log(res);
+          console.log("博客登录成功");
+        }
+      );
     },
     toRegister() {
       this.isShow = !this.isShow;

@@ -241,6 +241,18 @@
         <router-view></router-view>
       </div>
     </div>
+
+    <div
+      style=";width:calc(100% - 100px);padding: 10px;margin: 50px auto ;    box-shadow: 1px 1px 5px gray;
+ "
+    >
+      <!-- <div
+        style="width:calc(100% - 100px) ;margin:  0 20px;padding: 10px;border: 1px solid rgb(187, 161, 161);"
+      >
+        <router-view></router-view>
+      </div> -->
+      <Blog />
+    </div>
     <!-- </el-container> -->
     <div style="height:300px"></div>
   </div>
@@ -251,6 +263,9 @@ import Bus from "../../hepler/Bus";
 import { mapState, mapGetters, mapActions } from "vuex";
 import Child from "./child.vue";
 import api from "../utils/http/axios";
+import request from "../utils/http/blog";
+import blog from "@/pages/blog/blog";
+import Blog from "../pages/blog/blog.vue";
 export default {
   // inject: ["na"],
   name: "HelloWorld",
@@ -290,7 +305,10 @@ export default {
     let userName = window.localStorage.getItem("userName");
     this.userName = userName;
     // this.getInfo();
-    this.setLogin();
+    this.setLogin(); //判断用户是否登录
+    // this.blogLogin();
+    // this.blogIsLogin(); //判断博客登录是否过期
+
     // console.log(this.$store);
     // console.log(this.$store.state);
     // console.log(this.$store.state.user.count);
@@ -455,7 +473,7 @@ export default {
       }
     }
   },
-  components: { Child }
+  components: { Child, Blog }
 };
 </script>
 

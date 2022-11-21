@@ -1,6 +1,7 @@
 // import axios from 'axios'
-// import NProgress from 'nprogress'
-// import 'nprogress/nprogress.css';   //导入样式
+import { reject } from 'lodash';
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css';   //导入样式
 // import { Message } from 'element-ui'
 
 
@@ -55,19 +56,30 @@
 
 
 const request = (url, method, data) => {
+  let token = window.localStorage.getItem('token')
+  NProgress.start()
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.open(`${method}`, `//blog-server.hunger-valley.com${url}`)
+    xhr.open(`${method}`, `//blog-server.hunger-valley.com${url}`, true)
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    xhr.setRequestHeader('Authorization', token)
     xhr.send(data)
     xhr.onreadystatechange = () => {
       if (xhr.readyState == 4 && xhr.status == 200) {
-        console.log(xhr.responseText)
-        resolve(xhr)
+        // console.log(xhr.responseText)
+        NProgress.done()
+        let res = JSON.parse(xhr.responseText)  //对后端返回的json格式数据统一转换为js格式
+        resolve(res)
       }
     }
+  }).catch(err => {
+    NProgress.done()
+    reject(err)
   })
 }
 
-request('/auth/login', 'POST', 'username=lts&password=123456')
+// request('/auth/login', 'POST', 'username=lts&password=123456')
+
+export default request
+
 

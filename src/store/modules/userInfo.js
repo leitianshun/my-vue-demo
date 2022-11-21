@@ -22,7 +22,7 @@ const mutations = {
     setLogin(state, payload) {
 
         state.isLogin = payload.isLogin
-        console.log(state.isLogin)
+        // console.log(state.isLogin)
     }
 }
 
@@ -41,7 +41,8 @@ const actions = {
         api.getInfo().then((res) => {
             console.log(res)
             if (!res.isLogin) {
-                router.push(payload)
+                // router.push(payload)
+                this.$message.error('请先登录')
             } else {
                 commit('setLogin', { isLogin: true })
 
