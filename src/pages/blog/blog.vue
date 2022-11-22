@@ -7,9 +7,7 @@
         <el-button type="warning" round @click="blogIsLogin"
           >判断博客登录是否过期</el-button
         >
-        <el-button type="success" round @click="dialogFormVisible = true"
-          >新增博客</el-button
-        >
+        <el-button type="success" round @click="showDialog">新增博客</el-button>
         <el-button type="warning" round @click="getAllBlogList"
           >获取博客列表</el-button
         >
@@ -18,7 +16,10 @@
       </el-col>
     </el-row>
     <hr />
-    <el-dialog title="添加博客" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="isAdd ? '添加博客' : '修改博客'"
+      :visible.sync="dialogFormVisible"
+    >
       <el-form :model="form">
         <el-form-item label="博客标题:" :label-width="formLabelWidth">
           <el-input
@@ -56,13 +57,15 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addBlog">确 定</el-button>
+        <el-button type="primary" @click="isAdd ? addBlog() : editBlog()"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
     <el-row type="flex" justify="center">
       <el-col :span="23">
         <ul class="noteBookList">
-          <li v-for="item in blogList" :key="item.id">
+          <li v-for="(item, index) in blogList" :key="item.id">
             <img
               :src="item.user.avatar"
               alt=""
@@ -81,7 +84,7 @@
               删除</span
             >
             <span
-              @click.stop="editBlog(item.id)"
+              @click.stop="showDialog2(item.id, index)"
               class="el-icon-edit"
               style="margin:0 20px;"
               >修改</span
@@ -103,13 +106,46 @@ export default {
       totalPage: "",
       dialogFormVisible: false,
       formLabelWidth: "120px",
-      form: {}
+      form: {},
+      isAdd: false,
+      blogId: ""
     };
   },
   created() {
     this.getAllBlogList();
   },
   methods: {
+    showDialog() {
+      this.dialogFormVisible = true;
+      this.isAdd = true;
+      this.form == {};
+    },
+    async showDialog2(id, index) {
+      this.form == {};
+      let res = await request("/blog/" + id, "get", null);
+      console.log(res);
+      this.form.content = res.data.content;
+      this.blogId = id;
+      this.isAdd = false;
+      console.log("🚀 ~ file: blog.vue ~ line 66 ~ editBlog ~ id", id);
+      this.dialogFormVisible = true;
+      let blogItem = this.blogList[index];
+      console.log(blogItem);
+      this.form.title = blogItem.title;
+      // this.form.content = blogItem.content;
+      this.form.description = blogItem.description;
+      this.form.atIndex = blogItem.atIndex;
+
+      // request("/blog/" + id, "get", null).then(res => {
+      //   //获取博客详情
+      //   console.log("🚀 ~ file: blog.vue ~ line 181 ~ request ~ res", res);
+      //   let blogDetail = res.data;
+      //   this.form.title = blogDetail.title;
+      //   this.form.content = blogDetail.content;
+      //   this.form.description = blogDetail.description;
+      //   this.form.atIndex = blogDetail.atIndex;
+      // });
+    },
     delBlog(id) {
       this.$confirm("此操作将删除该博客, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -135,18 +171,24 @@ export default {
     },
     addBlog() {
       this.dialogFormVisible = false;
-      if (this.form.title.length < 10) {
-        this.$message.error("文章标题至少10个字");
+      if (JSON.stringify(this.form) == "{}") {
+        this.$message.error("请完整填写内容");
         return;
+      } else {
+        if (this.form.title.length < 10) {
+          this.$message.error("文章标题至少10个字");
+          return;
+        }
+        if (this.form.description.length < 30) {
+          this.$message.error("文章简介至少30个字");
+          return;
+        }
+        if (this.form.content.length < 200) {
+          this.$message.error("文章内容至少200个字");
+          return;
+        }
       }
-      if (this.form.description.length < 30) {
-        this.$message.error("文章简介至少30个字");
-        return;
-      }
-      if (this.form.content.length < 200) {
-        this.$message.error("文章内容至少200个字");
-        return;
-      }
+
       request(
         "/blog",
         "post",
@@ -165,8 +207,23 @@ export default {
         this.getAllBlogList();
       });
     },
-    editBlog(id) {
-      console.log("🚀 ~ file: blog.vue ~ line 66 ~ editBlog ~ id", id);
+    editBlog() {
+      // .then(() => {
+      request(
+        "/blog/" + this.blogId,
+        "PATCH",
+        "title=" +
+          this.form.title +
+          "&description=" +
+          this.form.description +
+          "&atIndex=" +
+          this.form.atIndex +
+          "&content=" +
+          this.form.content
+      ).then(res => {
+        console.log("🚀 ~ file: blog.vue ~ line 196 ~ request ~ res", res);
+      });
+      // });
     },
     next() {
       if (this.page < this.totalPage) {
