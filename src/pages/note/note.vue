@@ -70,7 +70,7 @@
                 type="text"
                 placeholder=" 输入笔记标题"
                 v-model="selectNotes.title"
-                @keydown.native="keydownEvent($event)"
+                @keyup.native="statusText = '正在输入...'"
                 @input="updateNote"
               />
             </el-col>
@@ -82,7 +82,7 @@
             focus
             rows="18"
             v-model="selectNotes.content"
-            @keypress="statusText = '正在输入...'"
+            @keyup="statusText = '正在输入...'"
             placeholder="输入笔记内容"
             @input="updateNote"
           ></textarea>
@@ -143,9 +143,7 @@ export default {
         }
       });
     },
-    keydownEvent(e) {
-      console.log(e);
-    },
+
     updateNote: lodash.debounce(function() {
       api
         .updateNote(this.selectNotes.id, {
@@ -154,6 +152,7 @@ export default {
         })
         .then(res => {
           this.statusText = "已保存";
+          console.log(res.msg);
         })
         .catch(err => {
           this.statusText = "保存出错";

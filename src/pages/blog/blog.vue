@@ -116,21 +116,21 @@ export default {
   },
   methods: {
     showDialog() {
+      this.form = {};
       this.dialogFormVisible = true;
       this.isAdd = true;
-      this.form == {};
     },
     async showDialog2(id, index) {
-      this.form == {};
+      this.form = {};
       let res = await request("/blog/" + id, "get", null);
-      console.log(res);
+      console.log("🚀 ~ file: blog.vue ~ line 127 ~ showDialog2 ~ res", res);
       this.form.content = res.data.content;
       this.blogId = id;
       this.isAdd = false;
-      console.log("🚀 ~ file: blog.vue ~ line 66 ~ editBlog ~ id", id);
+      // console.log("🚀 ~ file: blog.vue ~ line 66 ~ editBlog ~ id", id);
       this.dialogFormVisible = true;
       let blogItem = this.blogList[index];
-      console.log(blogItem);
+      // console.log(blogItem);
       this.form.title = blogItem.title;
       // this.form.content = blogItem.content;
       this.form.description = blogItem.description;
@@ -317,7 +317,7 @@ export default {
         &:hover:last-child {
           color: rgb(255, 187, 0);
         }
-        &:hover:nth-child(6) {
+        &:hover:nth-child(7) {
           color: red;
         }
       }
