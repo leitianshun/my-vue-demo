@@ -116,6 +116,7 @@ export default {
     // console.log(this.$route.params.id);
     this.noteBookTitle = this.$route.query.title;
     let noteBookId = this.$route.query.id;
+    console.log(this.$route);
     if (noteBookId) {
       this.getNoteFromNoteBook(noteBookId).then(res => {
         if (res.data.length == 0) {

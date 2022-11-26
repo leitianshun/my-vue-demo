@@ -9,6 +9,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
+      redirect: '/notebook',
       name: 'HelloWorld',
       component: () => import('@/components/HelloWorld'),
       meta: {
@@ -17,11 +18,16 @@ const router = new Router({
       },
       children: [{
         path: 'notebook',
+        name: 'notebook',
         component: () => import('@/pages/note/notebook')
       },
       {
         name: 'note',
         path: 'note',
+        meta: {
+          title: 'Permission',
+          roles: ['admin', 'editor'] // 普通的用户角色
+        },
         component: () => import('@/pages/note/note')
       },
       {
