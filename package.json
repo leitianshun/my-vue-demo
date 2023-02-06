@@ -15,9 +15,9 @@
     "lodash": "^4.17.21",
     "module": "^1.2.5",
     "moment": "^2.29.4",
-    "node-sass": "^4.14.1",
     "nprogress": "^0.2.0",
     "sass-loader": "^7.3.1",
+    "sass": "^1.51.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.6.2"
